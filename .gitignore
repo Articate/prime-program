@@ -1,0 +1,14 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[codz]
+*$py.class
+
+#distribution / packaging
+dist/
+
+# Environments
+.env
+.venv/
+
+.ruff_cache/
+
