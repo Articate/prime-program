@@ -1,6 +1,6 @@
 import disnake
 
-from .settings import settings
+from prime_program.settings import settings
 
 __version__ = "0.0.1a1"
 
@@ -21,8 +21,13 @@ class MyClient(disnake.Client):
             await message.channel.send("pong")
 
 
-intents = disnake.Intents.default()
-intents.message_content = True
+def main() -> None:
+    intents = disnake.Intents.default()
+    intents.message_content = True
 
-client = MyClient(intents=intents)
-client.run(settings.bot_key)
+    client = MyClient(intents=intents)
+    client.run(settings.bot_key)
+
+
+if __name__ == "__main__":
+    main()
