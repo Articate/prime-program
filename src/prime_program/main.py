@@ -1,11 +1,13 @@
 import disnake
+from disnake.ext import commands
 
+from prime_program.cogs import load_extensions
 from prime_program.settings import settings
 
 __version__ = "0.0.1a1"
 
 
-class MyClient(disnake.Client):
+class PrimeBot(commands.InteractionBot):
     async def on_ready(self):
         print(f"Logged on as {self.user}!")
 
@@ -21,12 +23,18 @@ class MyClient(disnake.Client):
             await message.channel.send("pong")
 
 
-def main() -> None:
+def build_bot() -> PrimeBot:
     intents = disnake.Intents.default()
     intents.message_content = True
 
-    client = MyClient(intents=intents)
-    client.run(settings.bot_key)
+    bot = PrimeBot(intents=intents, test_guilds=settings.command_sync_guild_ids)
+    load_extensions(bot)
+    return bot
+
+
+def main() -> None:
+    bot = build_bot()
+    bot.run(settings.bot_key)
 
 
 if __name__ == "__main__":
