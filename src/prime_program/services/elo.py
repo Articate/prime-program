@@ -8,15 +8,15 @@ class EloOutcome:
     loss_delta: float
 
 
-def expected_score(player_rating: int, opponent_rating: int, scale: int) -> float:
+def expected_score(player_rating: float, opponent_rating: float, scale: float) -> float:
     return 1 / (1 + 10 ** ((opponent_rating - player_rating) / scale))
 
 
 def calculate_elo_outcome(
-    player_rating: int,
-    opponent_rating: int,
-    k_factor: int,
-    scale: int,
+    player_rating: float,
+    opponent_rating: float,
+    k_factor: float,
+    scale: float,
 ) -> EloOutcome:
     expected = expected_score(player_rating=player_rating, opponent_rating=opponent_rating, scale=scale)
     return EloOutcome(
