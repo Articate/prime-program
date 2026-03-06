@@ -1,26 +1,32 @@
 from dataclasses import dataclass
 from math import log
 
+from prime_program.settings import settings
+
 TOP_RANK_MAX = 16
 
 # Keep this sparse/manual when needed. Missing ranks are interpolated between nearby anchors.
 TOP_RANK_POINT_ANCHORS: dict[int, int] = {
-    1: 2715,
-    2: 2684,
-    3: 2647,
-    4: 2562,
-    5: 2554,
-    6: 2407,
-    7: 2363,
-    8: 2348,
-    9: 2338,
-    10: 2329,
-    11: 2320,
-    12: 2319,
-    13: 2313,
-    14: 2296,
-    15: 2293,
-    16: 2212,
+    1: 2948,
+    2: 2834,
+    3: 2723,
+    4: 2716,
+    5: 2616,
+    6: 2581,
+    7: 2572,
+    8: 2550,
+    9: 2517,
+    10: 2480,
+    11: 2467,
+    12: 2393,
+    13: 2379,
+    14: 2360,
+    15: 2354,
+    16: 2342,
+    17: 2319,
+    18: 2290,
+    19: 2266,
+    20: 2263,
 }
 
 
@@ -86,6 +92,21 @@ def _infer_segment_points(rank: int) -> float:
     raise ValueError(f"No log-linear segment covers rank {rank}.")
 
 
+def _bottom_cliff(rank: int) -> float:
+    r_top = settings.elite_bottom_cliff_top_rank
+    r_max = settings.elite_bottom_cliff_max_rank
+    p_top = settings.elite_bottom_cliff_top_points
+    power = settings.elite_bottom_cliff_power
+
+    if rank <= r_top:
+        return float(p_top)
+    if rank >= r_max:
+        return 0.0
+
+    t = (rank - r_top) / (r_max - r_top)
+    return p_top * (1.0 - (t**power))
+
+
 def infer_elite_points(rank: int) -> int:
     if rank <= 0:
         raise ValueError("Rank must be greater than 0.")
@@ -93,4 +114,6 @@ def infer_elite_points(rank: int) -> int:
     if rank <= TOP_RANK_MAX:
         return round(_infer_top_rank_points(rank))
 
+    if rank >= settings.elite_bottom_cliff_top_rank:
+        return round(_bottom_cliff(rank))
     return round(_infer_segment_points(rank))
